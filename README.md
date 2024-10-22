@@ -1,135 +1,75 @@
-<H3>NAME: Aldrin Lijo J E </H3>
-<H3>REG NO:212222240007 </H3>
-<H3>EX. NO.3 </H3>
-<H3>DATE:30-09-24</H3>
-<H1 ALIGN =CENTER> Implementation of Approximate Inference in Bayesian Networks
-</H1>
+<H3>Name: Prakasam P </H3>
+<H3>Register No. : 212222040118</H3> 
+<H3>Experiment 2 </H3>
+<H3>Date : 27-09-24 </H3>
+<h1 align =center>Implementation of Exact Inference Method of Bayesian Network</h1>
 
-## Aim: 
-   To construct a python program to implement approximate inference using Gibbs Sampling.</br>
+## Aim:
+To implement the inference Burglary P(B| j,⥗m) in alarm problem by using Variable Elimination method in Python.
+
 ## Algorithm:
-   Step 1: Bayesian Network Definition and CPDs:<br>
-    <ul> <li>Define the Bayesian network structure using the BayesianNetwork class from pgmpy.models.</li>
-    <li>Define Conditional Probability Distributions (CPDs) for each variable using the TabularCPD class.</li>
-    <li>Add the CPDs to the network.</li></ul>
-    Step 2: Printing Bayesian Network Structure:<br>
-    <ul><li>Print the structure of the Bayesian network using the print(network) statement.</li></ul>
-   Step 3: Graph Visualization:
-    <ul><li>Import the necessary libraries (networkx and matplotlib).</li>
-    <li>Create a directed graph using networkx.DiGraph().</li>
-    <li>Define the nodes and edges of the graph.</li>
-    <li>Add nodes and edges to the graph.</li>
-    <li>Optionally, define positions for the nodes.</li>
-    <li>Use nx.draw() to visualize the graph using matplotlib.</li></ul>
-    Step 4: Gibbs Sampling and MCMC:<br>
-    <ul><li>Initialize Gibbs Sampling for MCMC using the GibbsSampling class and provide the Bayesian network.</li>
-    <li>Set the number of samples to be generated using num_samples.</li></ul>
-    Step 5: Perform MCMC Sampling:<br>
-    <ul><li>Use the sample() method of the GibbsSampling instance to perform MCMC sampling.</li>
-    <li>Store the generated samples in the samples variable.</li></ul>
-    Step 6: Approximate Probability Calculation:<br>
-    <ul><li>Specify the variable for which you want to calculate the approximate probabilities (query_variable).</li>
-    <li>Use .value_counts(normalize=True) on the samples of the query_variable to calculate approximate probabilities.</li></ul>
-    Step 7:Print Approximate Probabilities:<br>
-    <ul><li>Print the calculated approximate probabilities for the specified query_variable.</li></ul>
 
+**Step 1:** Define the Bayesian Network structure for alarm problem with 5 random variables, Burglary,Earthquake,John Call,Mary Call and Alarm.<br>
 
-## Program:
-```
-!pip install pgmpy
-!pip install networkx
+**Step 2:** Define the Conditional Probability Distributions (CPDs) for each variable using the TabularCPD class from the pgmpy library.<br>
+
+**Step 3:** Add the CPDs to the network.<br>
+
+**Step 4:** Initialize the inference engine using the VariableElimination class from the pgmpy library.<br>
+
+**Step 5:** Define the evidence (observed variables) and query variables.<br>
+
+**Step 6:** Perform exact inference using the defined evidence and query variables.<br>
+
+**Step 7:** Print the results.<br>
+
+## Program :
+```py
 from pgmpy.models import BayesianNetwork
 from pgmpy.factors.discrete import TabularCPD
-from pgmpy.sampling import GibbsSampling
-import networkx as nx
-import matplotlib.pyplot as plt
-
-alarm_model = BayesianNetwork(
-    [
-        ("Burglary", "Alarm"),
-        ("Earthquake", "Alarm"),
-        ("Alarm", "JohnCalls"),
-        ("Alarm", "MaryCalls"),
-    ]
-)
-
-# Defining the parameters using CPT
-from pgmpy.factors.discrete import TabularCPD
-
-cpd_burglary = TabularCPD(
-    variable="Burglary", variable_card=2, values=[[0.999], [0.001]]
-)
-cpd_earthquake = TabularCPD(
-    variable="Earthquake", variable_card=2, values=[[0.998], [0.002]]
-)
-cpd_alarm = TabularCPD(
-    variable="Alarm",
-    variable_card=2,
-    values=[[0.999, 0.71, 0.06, 0.05], [0.001, 0.29, 0.94, 0.95]],
-    evidence=["Burglary", "Earthquake"],
-    evidence_card=[2, 2],
-)
-cpd_johncalls = TabularCPD(
-    variable="JohnCalls",
-    variable_card=2,
-    values=[[0.95, 0.1], [0.05, 0.9]],
-    evidence=["Alarm"],
-    evidence_card=[2],
-)
-cpd_marycalls = TabularCPD(
-    variable="MaryCalls",
-    variable_card=2,
-    values=[[0.1, 0.7], [0.9, 0.3]],
-    evidence=["Alarm"],
-    evidence_card=[2],
-)
-
-# Associating the parameters with the model structure
-alarm_model.add_cpds(
-    cpd_burglary, cpd_earthquake, cpd_alarm, cpd_johncalls, cpd_marycalls
-)
-
-print("Bayesian Network Structure")
-print(alarm_model)
-
-G=nx.DiGraph()
-
-nodes=['Burglary','Earthquake','JohnCalls','MaryCalls']
-edges=[('Burglary','Alarm'),('Earthquake','Alarm'),('Alarm','JohnCalls'),('Alarm','MaryCalls')]
-
-G.add_nodes_from(nodes)
-G.add_edges_from(edges)
-
-pos={
-    'Burglary':(0,0),
-    'Earthquake':(2,0),
-    'Alarm':(1,-2),
-    'JohnCalls':(0,-4),
-    'MaryCalls':(2,-4)
-    }
-
-nx.draw(G,pos,with_labels=True,node_size=1500,node_color="skyblue",font_size=10,font_weight="bold",arrowsize=20)
-plt.title("Bayesian Network: Burglar Alarm Problem")
-plt.show()
-
-gibbssampler=GibbsSampling(alarm_model)
-num_samples=10000
-samples=gibbssampler.sample(size=num_samples)
-
-query_variable="Burglary"
-query_result=samples[query_variable].value_counts(normalize=True)
-print("\n Approximate probabilities of {}:".format(query_variable))
-print(query_result)
+from pgmpy.inference import VariableElimination
 ```
 
+```py
+network=BayesianNetwork([
+    ('Burglary','Alarm'),
+    ('Earthquake','Alarm'),
+    ('Alarm','JohnCalls'),
+    ('Alarm','MaryCalls')
+])
+```
+
+```py
+cpd_burglary = TabularCPD(variable='Burglary',variable_card=2,values=[[0.999],[0.001]])
+cpd_earthquake = TabularCPD(variable='Earthquake',variable_card=2,values=[[0.998],[0.002]])
+cpd_alarm = TabularCPD(variable ='Alarm',variable_card=2, values=[[0.999, 0.71, 0.06, 0.05],[0.001, 0.29, 0.94, 0.95]],evidence=['Burglary','Earthquake'],evidence_card=[2,2])
+cpd_john_calls = TabularCPD(variable='JohnCalls',variable_card=2,values=[[0.95,0.1],[0.05,0.9]],evidence=['Alarm'],evidence_card=[2])
+cpd_mary_calls = TabularCPD(variable='MaryCalls',variable_card=2,values=[[0.99,0.3],[0.01,0.7]],evidence=['Alarm'],evidence_card=[2])
+```
+
+```py
+network.add_cpds(cpd_burglary,cpd_earthquake,cpd_alarm,cpd_john_calls,cpd_mary_calls)
+
+inference = VariableElimination(network)
+```
+
+```py
+evidence ={'JohnCalls':1,'MaryCalls':0}
+query_variable ='Burglary'
+result = inference.query(variables=[query_variable],evidence=evidence)
+print(result)
+```
+
+```py
+evidence1 ={'JohnCalls':1,'MaryCalls':1}
+query_variable ='Burglary'
+result2 = inference.query(variables=[query_variable],evidence=evidence)
+print(result2)
+```
+
+## Output :
+![Screenshot 2024-02-26 183500](https://github.com/Jaiganesh235/Ex2---AAI/assets/118657189/1df9523a-dea1-42f7-a5be-828ead7e5955)
 
 
-## Output:
-![Screenshot (334)](https://github.com/Jaiganesh235/Ex-3--AAI/assets/118657189/3f3c55a9-95a2-40a5-9d83-ef5af3451f1b)
-![Screenshot 2024-02-29 191243](https://github.com/Jaiganesh235/Ex-3--AAI/assets/118657189/bd4f4f41-f178-48d4-9e87-82136d252ea4)
-![Screenshot 2024-02-29 191255](https://github.com/Jaiganesh235/Ex-3--AAI/assets/118657189/b366b1d9-2c3a-427f-9f23-c377a85388eb)
-
-
-
-## Result:
-Thus, Gibb's Sampling( Approximate Inference method) is succuessfully implemented using python.
+## Result :
+Thus, Bayesian Inference was successfully determined using Variable Elimination Method
